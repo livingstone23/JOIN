@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Join.Data;
+using Join.Data.Repositorios;
+using Join.Data.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -34,7 +36,10 @@ namespace Join.WebApi
             services.AddDbContext<TiendaDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            
+
+            //Realizamos inyeccion de dependencia para poder utilizar nuestros repositorios
+            services.AddScoped<IProductosRepositio, ProductosRepositorio>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
