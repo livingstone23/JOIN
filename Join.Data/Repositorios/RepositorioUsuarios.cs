@@ -162,6 +162,5 @@ namespace Join.Data.Repositorios
             return (false, null);
         }
 
-
     }
 }
