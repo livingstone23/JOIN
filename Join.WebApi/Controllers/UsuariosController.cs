@@ -6,11 +6,13 @@ using AutoMapper;
 using Join.Data.Services;
 using Join.Dto;
 using Join.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Join.WebApi.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
     public class UsuariosController : ControllerBase

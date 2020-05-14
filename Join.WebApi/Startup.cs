@@ -1,12 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Join.Data;
 using Join.Data.Repositorios;
 using Join.Data.Services;
 using Join.Models;
+using Join.WebApi.Extensions;
+using Join.WebApi.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -18,6 +22,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
 
@@ -25,7 +30,7 @@ namespace Join.WebApi
 {
     public class Startup
     {
-        public IConfiguration Configuration;
+        public IConfiguration Configuration { get; }
 
         public Startup(IConfiguration configuration)
         {
@@ -44,13 +49,11 @@ namespace Join.WebApi
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
 
-            //Realizamos inyeccion de dependencia para poder utilizar nuestros repositorios
-            services.AddScoped<IRepositorioGenerico<Perfil>, RepositorioPerfiles>();
-            services.AddScoped<IProductosRepositorio, ProductosRepositorio>();
-            services.AddScoped<IOrdenesRepositorio, RepositorioOrdenes>();
+            services.ConfigureDependencies();
+            
+            services.ConfigurejWT(Configuration);
 
-            services.AddScoped<IUsuariosRepositorio, RepositorioUsuarios>();
-            services.AddScoped<IPasswordHasher<Usuario>, PasswordHasher<Usuario>>();
+            services.ConfigureCors();
 
         }
 
@@ -62,10 +65,18 @@ namespace Join.WebApi
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+            }else
+            {
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
             }
 
+            
             app.UseRouting();
-
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseCors("CorsPolicy");
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

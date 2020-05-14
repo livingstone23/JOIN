@@ -10,10 +10,12 @@ using Join.Data;
 using Join.Data.Services;
 using Join.Dto;
 using Join.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 
 namespace Join.WebApi.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductosController : ControllerBase
