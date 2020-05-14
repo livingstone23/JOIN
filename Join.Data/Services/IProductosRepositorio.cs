@@ -6,11 +6,11 @@ using Join.Models;
 
 namespace Join.Data.Services
 {
-    public interface IProductosRepositio
+    public interface IProductosRepositorio
     {
         Task<List<Producto>> ObtenerProductosAsync();
         Task<Producto> ObtenerProductoAsync(int id);
-        Task<Producto> AgregarProducto(Producto producto);
+        Task<Producto> Agregar(Producto producto);
         Task<bool> Actualizar(Producto producto);
         Task<bool> Eliminar(int id);
     }

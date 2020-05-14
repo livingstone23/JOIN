@@ -7,61 +7,58 @@ using Join.Data.Services;
 using Join.Models;
 using Join.Models.Enum;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Join.Data.Repositorios
 {
-    public class ProductosRepositorio: IProductosRepositio
+    public class ProductosRepositorio: IProductosRepositorio
     {
         private TiendaDbContext _contexto;
+        private readonly ILogger<ProductosRepositorio> _logger;
 
-        public ProductosRepositorio(TiendaDbContext contexto)
+        public ProductosRepositorio(TiendaDbContext contexto, ILogger<ProductosRepositorio> logger)
         {
             _contexto = contexto;
+            _logger = logger;
         }
         public async Task<bool> Actualizar(Producto producto)
         {
-            _contexto.Productos.Attach(producto);
-            _contexto.Entry(producto).State = EntityState.Modified;
+            var productoBd = await ObtenerProductoAsync(producto.Id);
+            productoBd.Nombre = producto.Nombre;
+            productoBd.Precio = producto.Precio;
+
+            //_contexto.producto.attach(producto);
+            //_contexto.Entry(producto).State = EntityState.Modified;
             try
             {
                 return await _contexto.SaveChangesAsync() > 0 ? true : false;
             }
             catch (Exception excepcion)
             {
-                ;
+                _logger.LogError($"Error en {nameof(Actualizar)}: {excepcion.Message}");
             }
             return false;
         }
 
         public async Task<Producto> Agregar(Producto producto)
         {
+            producto.Estatus = EstatusProducto.Activo;
+            producto.FechaRegistro = DateTime.UtcNow;
             _contexto.Productos.Add(producto);
+
             try
             {
                 await _contexto.SaveChangesAsync();
             }
             catch (Exception excepcion)
             {
-                ;
+                _logger.LogError($"Error en {nameof(Agregar)}: {excepcion.Message}");
+                return null;
             }
 
             return producto;
         }
 
-        public async Task<Producto> AgregarProducto(Producto producto)
-        {
-            _contexto.Productos.Add(producto);
-            try
-            {
-                await _contexto.SaveChangesAsync();
-            }
-            catch (Exception excepcion)
-            {
-                ;
-            }
-
-            return producto;
-        }
 
         public async Task<bool> Eliminar(int id)
         {
@@ -80,7 +77,7 @@ namespace Join.Data.Repositorios
             }
             catch (Exception excepcion)
             {
-                ;
+                _logger.LogError($"Error en {nameof(Eliminar)}: {excepcion.Message}"); ;
             }
             return false;
 

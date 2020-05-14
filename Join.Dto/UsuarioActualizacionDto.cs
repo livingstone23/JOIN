@@ -1,8 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Text;
 
 namespace Join.Dto
 {
-    public class UsuarioDto
+    public class UsuarioActualizacionDto
     {
         public int Id { get; set; }
         [Required]
@@ -14,15 +17,5 @@ namespace Join.Dto
         [Display(Name = "Correo Electrónico")]
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
-        [Required]
-        [Display(Name = "Cuenta")]
-        public string Username { get; set; }
-        [Required]
-        [Display(Name = "Password")]
-        public string Password { get; set; }
-        [Required]
-        [Display(Name = "Perfil del usuario")]
-        public int PerfilId { get; set; }
-        public string Perfil { get; set; }
     }
 }
